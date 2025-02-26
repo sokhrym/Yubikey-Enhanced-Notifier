@@ -12,6 +12,8 @@ class AppState: ObservableObject {
         didSet {
             if notify {
                 print("Notification triggered.")
+            } else {
+                print("Notification closed.")
             }
         }
     }
