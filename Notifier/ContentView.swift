@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var appModel: AppState
+
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("Main Content \(appModel.showModal)")
+                .padding()
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView().environmentObject(AppState())
 }

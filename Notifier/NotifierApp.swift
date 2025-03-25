@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct NotifierApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra("NotifierApp", systemImage: "key") {
             ContentView()
+                .environmentObject(appDelegate.appState)
+                .id(appDelegate.appState.showModal)
         }
+        .menuBarExtraStyle(.window)
     }
 }
