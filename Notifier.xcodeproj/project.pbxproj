@@ -24,7 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5A13C9E52D932ED4002B50EE /* Notifier.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notifier.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A13C9E52D932ED4002B50EE /* Yubikey Enhanced Notifier.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yubikey Enhanced Notifier.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A13C9F62D932ED5002B50EE /* NotifierTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotifierTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A13CA002D932ED5002B50EE /* NotifierUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NotifierUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -85,7 +85,7 @@
 		5A13C9E62D932ED4002B50EE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5A13C9E52D932ED4002B50EE /* Notifier.app */,
+				5A13C9E52D932ED4002B50EE /* Yubikey Enhanced Notifier.app */,
 				5A13C9F62D932ED5002B50EE /* NotifierTests.xctest */,
 				5A13CA002D932ED5002B50EE /* NotifierUITests.xctest */,
 			);
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5A13C9E42D932ED4002B50EE /* Notifier */ = {
+		5A13C9E42D932ED4002B50EE /* Yubikey Enhanced Notifier */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5A13CA0A2D932ED5002B50EE /* Build configuration list for PBXNativeTarget "Notifier" */;
+			buildConfigurationList = 5A13CA0A2D932ED5002B50EE /* Build configuration list for PBXNativeTarget "Yubikey Enhanced Notifier" */;
 			buildPhases = (
 				5A13C9E12D932ED4002B50EE /* Sources */,
 				5A13C9E22D932ED4002B50EE /* Frameworks */,
@@ -110,11 +110,11 @@
 			fileSystemSynchronizedGroups = (
 				5A13C9E72D932ED4002B50EE /* Notifier */,
 			);
-			name = Notifier;
+			name = "Yubikey Enhanced Notifier";
 			packageProductDependencies = (
 			);
 			productName = Notifier;
-			productReference = 5A13C9E52D932ED4002B50EE /* Notifier.app */;
+			productReference = 5A13C9E52D932ED4002B50EE /* Yubikey Enhanced Notifier.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5A13C9F52D932ED5002B50EE /* NotifierTests */ = {
@@ -200,7 +200,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5A13C9E42D932ED4002B50EE /* Notifier */,
+				5A13C9E42D932ED4002B50EE /* Yubikey Enhanced Notifier */,
 				5A13C9F52D932ED5002B50EE /* NotifierTests */,
 				5A13C9FF2D932ED5002B50EE /* NotifierUITests */,
 			);
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		5A13C9F82D932ED5002B50EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5A13C9E42D932ED4002B50EE /* Notifier */;
+			target = 5A13C9E42D932ED4002B50EE /* Yubikey Enhanced Notifier */;
 			targetProxy = 5A13C9F72D932ED5002B50EE /* PBXContainerItemProxy */;
 		};
 		5A13CA022D932ED5002B50EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5A13C9E42D932ED4002B50EE /* Notifier */;
+			target = 5A13C9E42D932ED4002B50EE /* Yubikey Enhanced Notifier */;
 			targetProxy = 5A13CA012D932ED5002B50EE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -399,6 +399,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Notifier/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Yubikey Enhanced Notifier";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -424,6 +425,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Notifier/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Yubikey Enhanced Notifier";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -513,7 +515,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5A13CA0A2D932ED5002B50EE /* Build configuration list for PBXNativeTarget "Notifier" */ = {
+		5A13CA0A2D932ED5002B50EE /* Build configuration list for PBXNativeTarget "Yubikey Enhanced Notifier" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5A13CA0B2D932ED5002B50EE /* Debug */,
