@@ -2,11 +2,12 @@
 //  AppDelegate.swift
 //  Notifier
 //
-//  Created by sokhrym on 25.03.2025.
+//  Created by sokhrym on 26.03.2025.
 //
 import Cocoa
 import SwiftUI
 import Combine
+
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     static private(set) var instance: AppDelegate! = nil
@@ -18,15 +19,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         AppDelegate.instance = self
         appState.startMonitoring()
         
-        appState.$showModal
+        appState.$notify
             .receive(on: DispatchQueue.main)
-            .sink { show in
-                if show {
-                    
-                    self.showFloatingPanel()
-                } else {
-                    self.closeFloatingPanel()
-                }
+            .sink { [weak self] notify in
+                self?.handleNotificationStateChange(notify)
             }
             .store(in: &cancellables)
     }
@@ -44,16 +40,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         DispatchQueue.main.async {
             let contentView = YubiKeyPromptView()
-                .environmentObject(self.appState)
             let hostingController = NSHostingController(rootView: contentView)
 
             self.floatingPanel = NSPanel(
-                contentRect: NSRect(x: 0, y: 0, width: 480, height: 270),
-                styleMask: [.titled, .closable, .resizable],
+                contentRect: NSRect(x: 0, y: 0, width: 270, height: 270),
+                styleMask: [],
                 backing: .buffered,
                 defer: true
             )
-
+            
             self.floatingPanel?.contentViewController = hostingController
             self.floatingPanel?.center()
             self.floatingPanel?.level = .floating
@@ -62,6 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.floatingPanel?.isMovableByWindowBackground = true
             self.floatingPanel?.hidesOnDeactivate = false
             self.floatingPanel?.makeKeyAndOrderFront(nil)
+            
         }
     }
 
@@ -70,5 +66,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.floatingPanel?.close()
             self.floatingPanel = nil
         }
+    }
+
+    private func handleNotificationStateChange(_ notify: Bool) {
+        if notify {
+            if appState.isSoundEnabled {
+                playNotificationSound()
+            }
+            
+            if appState.isModalEnabled {
+                showFloatingPanel()
+            }
+        }
+        else {
+            closeFloatingPanel()
+        }
+    }
+
+    private func playNotificationSound() {
+        NSSound(named: "Funk")?.play()
     }
 }

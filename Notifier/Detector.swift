@@ -2,11 +2,10 @@
 //  Detector.swift
 //  Notifier
 //
-//  Created by sokhrym on 25.03.2025.
+//  Created by sokhrym on 26.03.2025.
 //
-
-import Foundation
 import Combine
+import Foundation
 
 struct LogEntry: Decodable {
     let processImagePath: String
@@ -19,79 +18,118 @@ class TouchState {
     var fido2Needed = false
     var openPGPNeeded = false
     var lastNotify = Date()
-    
+
     func checkToNotify() -> Bool? {
         let now = Date()
-        guard now.timeIntervalSince(lastNotify) >= 0.1 else { return nil }
-        
+        guard now.timeIntervalSince(lastNotify) >= 3 else { return nil }
+
         let notifyNeeded = fido2Needed || openPGPNeeded
-        
         lastNotify = now
-        
+
         return notifyNeeded
     }
 }
 
 class Detector: ObservableObject {
-    @Published var showModal = false {
-        didSet {
-            if showModal {
-                print("showModal state changed to true")
-            } else {
-                print("showModal state changed to false")
-            }
-        }
-    }
     private var touchState = TouchState()
     var appState: AppState
-    
-    init(appState: AppState)
-    {
+
+    private var isModalVisible = false
+    private var modalTimer: Timer?
+
+    private var process: Process!
+    private var pipe: Pipe!
+    private var handle: FileHandle!
+
+    private var source: DispatchSourceRead!
+
+    init(appState: AppState) {
         self.appState = appState
     }
 
     func startMonitoring() {
         let process = Process()
+
         process.launchPath = "/usr/bin/log"
-        process.arguments = ["stream", "--level", "debug", "--style", "ndjson"]
-        
+        process.arguments = [
+            "stream",
+            "--level", "debug",
+            "--style", "ndjson",
+            "--predicate",
+            "(eventMessage CONTAINS 'IOHIDLibUserClient:0x' OR eventMessage == 'Time extension received' OR eventMessage CONTAINS 'received { messageType: RDR_to_PC_DataBlock')",
+        ]
+
         let pipe = Pipe()
         process.standardOutput = pipe
-        let handle = pipe.fileHandleForReading
-        
+        handle = pipe.fileHandleForReading
+
         process.launch()
+
+        let fileDescriptor = handle.fileDescriptor
+        source = DispatchSource.makeReadSource(fileDescriptor: fileDescriptor, queue: DispatchQueue.global(qos: .background))
         
-        let queue = DispatchQueue(label: "LogStreamQueue")
-        
-        queue.async {
-            while let line = String(data: handle.availableData, encoding: .utf8), !line.isEmpty {
-                guard let data = line.data(using: .utf8) else { continue }
-                if let entry = try? JSONDecoder().decode(LogEntry.self, from: data) {
-                    self.updateState(with: entry)
+        source.setEventHandler { [weak self] in
+            if let validHandle = self?.handle {
+                let data = validHandle.availableData
+                if !data.isEmpty, let entry = try? JSONDecoder().decode(LogEntry.self, from: data) {
+                    self?.updateState(with: entry)
+                    self?.checkForNotification()
                 }
             }
         }
-        
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            if self.touchState.checkToNotify() != nil {
-                DispatchQueue.main.async {
-                    self.appState.showModal = self.touchState.fido2Needed || self.touchState.openPGPNeeded
-                }
-            }
+
+        source.setCancelHandler { [weak self] in
+            self?.handle?.closeFile()
+        }
+
+        source.resume()
+
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.clearPipeHandle()
         }
     }
-    
-    func stopMonitoring() {
-        
-    }
-    
+
     private func updateState(with entry: LogEntry) {
         if entry.processImagePath == "/kernel" && entry.senderImagePath.hasSuffix("IOHIDFamily") {
-            touchState.fido2Needed = entry.eventMessage.contains("IOHIDLibUserClient:0x") && entry.eventMessage.hasSuffix("startQueue")
+            touchState.fido2Needed =
+                entry.eventMessage.contains("IOHIDLibUserClient:0x")
+                && entry.eventMessage.hasSuffix("startQueue")
         }
-        
-        if entry.processImagePath.hasSuffix("usbsmartcardreaderd") && entry.subsystem.hasSuffix("CryptoTokenKit") {
+
+        if entry.processImagePath.hasSuffix("usbsmartcardreaderd")
+            && entry.subsystem.hasSuffix("CryptoTokenKit")
+        {
             touchState.openPGPNeeded = entry.eventMessage == "Time extension received"
+        }
+        if entry.eventMessage.contains("received { messageType: RDR_to_PC_DataBlock") {
+            DispatchQueue.main.async {
+                self.appState.notify = false
+                self.modalTimer?.invalidate()
+            }
+        }
+    }
+
+    private func checkForNotification() {
+        if let notifyNeeded = touchState.checkToNotify(), notifyNeeded {
+            DispatchQueue.main.async {
+                self.appState.notify = true
+            }
+        }
+    }
+
+    func stopMonitoring() {
+        process.terminate()
+        source.cancel()
+        modalTimer?.invalidate()
+    }
+
+    private func clearPipeHandle() {
+        DispatchQueue.global(qos: .background).async {
+            if let validHandle = self.handle {
+                _ = validHandle.availableData
+            } else {
+                print("Error: Handle is nil.")
+            }
         }
     }
 }

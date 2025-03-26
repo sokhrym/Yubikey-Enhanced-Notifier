@@ -2,31 +2,29 @@
 //  YubiKeyPromptView.swift
 //  Notifier
 //
-//  Created by sokhrym on 25.03.2025.
+//  Created by sokhrym on 26.03.2025.
 //
 import SwiftUI
 
 struct YubiKeyPromptView: View {
-    @EnvironmentObject var appModel: AppState
-
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             Text("Please touch your YubiKey")
-                .font(.title)
-                .padding()
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+                .padding(.top, 20)
+
             Image(systemName: "key.fill")
-                .font(.system(size: 100))
+                .font(.system(size: 120))
+                .foregroundColor(.blue)
                 .padding()
-            Button("Dismiss") {
-                appModel.showModal = false
-            }
-            .padding()
         }
-        .frame(width: 480, height: 270)
+        .frame(width: 270, height: 270)
+        .padding()
     }
 }
 
-//
-//#Preview {
-//    YubiKeyPromptView()
-//}
+#Preview {
+    YubiKeyPromptView()
+}
