@@ -102,9 +102,11 @@ class Detector: ObservableObject {
             touchState.openPGPNeeded = entry.eventMessage == "Time extension received"
         }
         if entry.eventMessage.contains("received { messageType: RDR_to_PC_DataBlock") {
-            DispatchQueue.main.async {
-                self.appState.notify = false
-                self.modalTimer?.invalidate()
+            if self.appState.notify {
+                DispatchQueue.main.async {
+                    self.appState.notify = false
+                    self.modalTimer?.invalidate()
+                }
             }
         }
     }

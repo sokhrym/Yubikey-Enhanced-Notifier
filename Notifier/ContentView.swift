@@ -13,8 +13,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("Yubikey Touch Detector")
-                .font(.title)
+            Text("Yubikey Enhanced Notifier")
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .padding(.top)
