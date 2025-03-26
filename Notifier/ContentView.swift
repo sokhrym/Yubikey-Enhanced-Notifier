@@ -19,13 +19,14 @@ struct ContentView: View {
                 .foregroundColor(.primary)
                 .padding(.top)
 
+            Toggle("Enable Modal", isOn: $appModel.isModalEnabled)
+                .toggleStyle(SwitchToggleStyle(tint: .blue))
+                .padding(.horizontal)
+
             Toggle("Enable Sound", isOn: $appModel.isSoundEnabled)
                 .toggleStyle(SwitchToggleStyle(tint: .blue))
                 .padding(.horizontal)
 
-            Toggle("Enable Modal", isOn: $appModel.isModalEnabled)
-                .toggleStyle(SwitchToggleStyle(tint: .blue))
-                .padding(.horizontal)
         }
         .padding()
         .cornerRadius(12)

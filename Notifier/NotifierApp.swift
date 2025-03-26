@@ -12,7 +12,7 @@ struct NotifierApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
-        MenuBarExtra("NotifierApp", systemImage: "key") {
+        MenuBarExtra("NotifierApp", image: "MenuBar") {
             ContentView()
                 .environmentObject(appDelegate.appState)
         }

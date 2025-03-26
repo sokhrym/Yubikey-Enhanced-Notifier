@@ -7,13 +7,6 @@
 import Foundation
 import Combine
 
-enum NotificationType {
-    case none
-    case modal
-    case sound
-    case both
-}
-
 class AppState: ObservableObject {
     @Published var notify: Bool = false {
         didSet {
@@ -30,7 +23,7 @@ class AppState: ObservableObject {
             print("isSoundEnabled changed: \(isSoundEnabled)")
         }
     }
-    @Published var isModalEnabled: Bool = false
+    @Published var isModalEnabled: Bool = true
     {
         didSet {
 
