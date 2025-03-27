@@ -17,14 +17,9 @@ struct LogEntry: Decodable {
 class TouchState {
     var fido2Needed = false
     var openPGPNeeded = false
-    var lastNotify = Date()
 
-    func checkToNotify() -> Bool? {
-        let now = Date()
-        guard now.timeIntervalSince(lastNotify) >= 3 else { return nil }
-
+    func checkToNotify() -> Bool {
         let notifyNeeded = fido2Needed || openPGPNeeded
-        lastNotify = now
 
         return notifyNeeded
     }
@@ -102,20 +97,14 @@ class Detector: ObservableObject {
             touchState.openPGPNeeded = entry.eventMessage == "Time extension received"
         }
         if entry.eventMessage.contains("received { messageType: RDR_to_PC_DataBlock") {
-            if self.appState.notify {
-                DispatchQueue.main.async {
-                    self.appState.notify = false
-                    self.modalTimer?.invalidate()
-                }
-            }
+            touchState.fido2Needed = false
+            touchState.openPGPNeeded = false
         }
     }
 
     private func checkForNotification() {
-        if let notifyNeeded = touchState.checkToNotify(), notifyNeeded {
-            DispatchQueue.main.async {
-                self.appState.notify = true
-            }
+        DispatchQueue.main.async {
+            self.appState.notify = self.touchState.checkToNotify()
         }
     }
 

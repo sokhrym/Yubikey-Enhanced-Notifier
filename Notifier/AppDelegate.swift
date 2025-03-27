@@ -13,6 +13,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     static private(set) var instance: AppDelegate! = nil
     var appState = AppState()
     var floatingPanel: NSPanel?
+    private var panelCloseTimer: Timer?
     private var cancellables: Set<AnyCancellable> = []
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -42,30 +43,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let contentView = YubiKeyPromptView()
             let hostingController = NSHostingController(rootView: contentView)
 
-            self.floatingPanel = NSPanel(
-                contentRect: NSRect(x: 0, y: 0, width: 270, height: 270),
-                styleMask: [],
+            let panel = NSPanel(
+                contentRect: NSRect(x: 720, y: 750, width: 270, height: 270),
+                styleMask: [.borderless, .nonactivatingPanel, .utilityWindow],
                 backing: .buffered,
                 defer: true
             )
+
+            panel.contentViewController = hostingController
+            panel.level = .screenSaver
+            panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
+            panel.isReleasedWhenClosed = false
+            panel.isMovableByWindowBackground = false
+            panel.hidesOnDeactivate = false
+
+
+            self.floatingPanel = panel
+            panel.makeKeyAndOrderFront(nil)
             
-            self.floatingPanel?.contentViewController = hostingController
-            self.floatingPanel?.center()
-            self.floatingPanel?.level = .floating
-            self.floatingPanel?.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
-            self.floatingPanel?.isReleasedWhenClosed = false
-            self.floatingPanel?.isMovableByWindowBackground = true
-            self.floatingPanel?.hidesOnDeactivate = false
-            self.floatingPanel?.makeKeyAndOrderFront(nil)
-            
+            self.startPanelCloseTimer()
         }
     }
-
+    
     func closeFloatingPanel() {
         DispatchQueue.main.async {
             self.floatingPanel?.close()
             self.floatingPanel = nil
         }
+        invalidatePanelCloseTimer()
     }
 
     private func handleNotificationStateChange(_ notify: Bool) {
@@ -85,5 +90,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func playNotificationSound() {
         NSSound(named: "Funk")?.play()
+    }
+    
+    private func startPanelCloseTimer() {
+        invalidatePanelCloseTimer()
+
+        panelCloseTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+            self?.closeFloatingPanel()
+        }
+    }
+
+    private func invalidatePanelCloseTimer() {
+        panelCloseTimer?.invalidate()
+        panelCloseTimer = nil
     }
 }
